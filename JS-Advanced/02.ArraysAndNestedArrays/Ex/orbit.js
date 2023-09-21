@@ -2,6 +2,7 @@ function solve(input) {
 
     const[width, height, x, y] = input;
 
+    //create empty board (filled with 0s)
     let board = new Array(width).fill().map(() => new Array(height).fill(0));
 
     board[x][y] = 1;
