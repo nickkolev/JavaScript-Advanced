@@ -1,5 +1,4 @@
 function solve(input) {
-
     // Declare dictionary with operands and methods
     const calcMap = {
         '+': (a, b) => a + b,
@@ -14,10 +13,8 @@ function solve(input) {
     for (let i = 0; i <= input.length; i++) {
         if(i === input.length) {
             if(numbers.length === 1) {
-                console.log(numbers[0]);
                 return numbers[0];
             }
-            console.log('Error: too many operands!');
             return 'Error: too many operands!';
         }
 
