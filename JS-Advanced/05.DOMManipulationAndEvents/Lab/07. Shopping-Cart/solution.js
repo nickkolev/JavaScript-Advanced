@@ -1,40 +1,32 @@
 function solve() {
-
-   let totalPrice = 0;
-   let productObj = {};
    
-   const addButtonElements = document.querySelectorAll('button.add-product');
-   const addButtonsArr = Array.from(addButtonElements);
-   addButtonsArr.forEach(el => {
-      el.addEventListener('click', addHandler);
-   })
+   let productsSet = new Set();
+   let prizes = [];
+   const products = Array.from(document.getElementsByClassName('add-product'));
 
-   let textArea = document.querySelector('textarea');
-   let allButtonsInHtml = document.querySelectorAll('button');
+   for(let product of products) {
 
-   let checkoutButton = document.querySelector('.checkout');
-   checkoutButton.addEventListener('click', checkoutFn);
+      product.addEventListener('click', addAndMessage);
 
-   function addHandler(e) {
-      let currentelement = e.target;
-      let divProduct = currentelement.parentElement.parentElement;
-      // качвам се 2 родителя на горе по дървото за да взема продукт-Дива
-
-      let productTitle = divProduct.querySelector('.product-title');
-      let product = productTitle.textContent;
-
-      let priceTag = divProduct.querySelector('.product-line-price');
-      let price = Number(priceTag.textContent);
-
-      totalPrice += price;
-
-      productObj[product] = true;
-      textArea.value += `Added ${product} for ${price.toFixed(2)} to the cart.\n`
    }
 
-   function checkoutFn() {
-      allButtonsInHtml.forEach(btn => btn.setAttribute("disabled", ""));
-      let nameProduct = Object.keys(productObj).join(', ');
-      textArea.value += `You bought ${nameProduct} for ${totalPrice.toFixed(2)}.`
+   document.getElementsByClassName('checkout')[0].addEventListener('click', checkoutMessage);
+
+   function checkoutMessage() {
+
+      document.getElementsByTagName('textarea')[0].textContent += `You bought ${Array.from(productsSet).join(', ')} for ${prizes.reduce((a, b) => a + b, 0).toFixed(2)}.`;
+      Array.from(document.getElementsByTagName('button')).forEach(x => x.disabled = true);
+      
    }
+
+   function addAndMessage(ev) {
+
+      let prize = Number(ev.target.parentNode.parentNode.children[3].textContent);
+      let product = ev.target.parentNode.parentNode.children[1].children[0].textContent;
+      let string = `Added ${product} for ${prize.toFixed(2)} to the cart.\n`;
+      document.getElementsByTagName('textarea')[0].disabled = false;
+      document.getElementsByTagName('textarea')[0].textContent += string;
+      productsSet.add(product);
+      prizes.push(prize);
+  }
 }
