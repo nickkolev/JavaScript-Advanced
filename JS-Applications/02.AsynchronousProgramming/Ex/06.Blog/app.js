@@ -1,81 +1,80 @@
-const postsURL = `http://localhost:3030/jsonstore/blog/posts`;
-const commentsURL = `http://localhost:3030/jsonstore/blog/comments`;
-
 function attachEvents() {
-    document.getElementById("btnLoadPosts").addEventListener("click", getPosts);
-    document.getElementById("btnViewPost").addEventListener("click", showPosts);
-}
+    
+    const selectPostElement = document.getElementById('posts');
 
-function getPosts() {
-    fetch(postsURL)
-        .then((res) => {
-            if (res.status !== 200) {
-                throw new Error("Wrong status code!");
-            }
+    const loadPostsButton = document.getElementById('btnLoadPosts');
+    loadPostsButton.addEventListener('click', loadPostsButtonClick);
 
-            return res.json();
-        })
-        .then((data) => {
-            let selectField = document.getElementById("posts");
-            selectField.innerHTML = '';
+    const viewPostButton = document.getElementById('btnViewPost');
+    viewPostButton.addEventListener('click', viewPostButtonClick);
 
-            Object.values(data).forEach(post => {
-                let newOption = document.createElement('option');
-                newOption.setAttribute('value', post.id);
-                newOption.textContent = post.title;
+    const postsUrl = `http://localhost:3030/jsonstore/blog/posts/`;
+    const commentsUrl = `http://localhost:3030/jsonstore/blog/comments/`;
 
-                selectField.appendChild(newOption);
-            });
-        });
-}
+    function loadPostsButtonClick(){
 
-function showPosts() {
-    let selectedPost = document.getElementById('posts');
-    let selectedPostId = selectedPost.value;
-    let selectedPostName = selectedPost.options[selectedPost.selectedIndex].textContent;
-    let selectedPostBody = '';
-
-    fetch(postsURL)
-        .then((res) => {
-            if (res.status !== 200) {
-                throw new Error("Wrong status code!");
-            }
-
-            return res.json();
-        })
-        .then((data) => {
-            Object.values(data).filter(p => p.id == selectedPostId).forEach(p => {
-                selectedPostBody = p.body;
+        //create option element for each post from the server response
+        fetch(postsUrl)
+            .then(response => response.json())
+            .then(data => {
+                
+                for (const key of Object.keys(data)) {
+                    
+                    let optionElement = document.createElement('option');
+                    optionElement.value = key;
+                    optionElement.text = data[key].title;
+                    selectPostElement.appendChild(optionElement);
+                }
             })
-        });
+    }
 
-    fetch(commentsURL)
-        .then((res) => {
-            if (res.status !== 200) {
-                throw new Error("Wrong status code!");
-            }
+    function viewPostButtonClick(){
 
-            return res.json();
-        })
-        .then((data) => {
-            let h1 = document.getElementById('post-title');
-            h1.textContent = selectedPostName.toUpperCase();
+        clearPreviousCommentDetails();
 
-            let postBodyP = document.getElementById('post-body');
-            postBodyP.textContent = selectedPostBody;
+        //post data request
+        fetch(postsUrl + selectPostElement.value)
+            .then(response => response.json())
+            .then(postData => {
 
-            let ul = document.getElementById('post-comments');
-            ul.textContent = '';
-            
-            Object.values(data).filter(post => post.postId == selectedPostId).forEach(p => {
+                document.getElementById('post-title').textContent = postData.title;
 
-                let li = document.createElement('li');
-                li.id = p.id;
-                li.textContent = p.text;
-
-                ul.appendChild(li);
+                let postBodyElement = document.createElement('li');
+                postBodyElement.textContent = postData.body;
+                document.getElementById('post-body').appendChild(postBodyElement);
+                
             })
-        })
+
+        //comments data request
+        fetch(commentsUrl)
+            .then(response => response.json())
+            .then(commentsData => {
+
+                let currPostComments = [];
+
+                //get all the comments for the current post
+                for (const key in commentsData) {
+                    if(commentsData[key].postId === selectPostElement.value){
+                        currPostComments.push(commentsData[key]);
+                    }
+                }
+
+                //attach li element for each comment
+                for (const comment of currPostComments) {
+                    
+                    let commentLiElement = document.createElement('li');
+                    commentLiElement.textContent = comment.text;
+                    document.getElementById('post-comments').appendChild(commentLiElement);
+                }
+            })
+    }
+
+    //clear previous post details when a request for new post is made.
+    function clearPreviousCommentDetails(){
+
+        document.getElementById('post-body').innerHTML = '';
+        document.getElementById('post-comments').innerHTML = '';
+    }
 }
 
 attachEvents();
