@@ -1,12 +1,12 @@
 async function getRecipes() {
-    const response = await fetch('http://localhost:3030/jsonstore/cookbook/recipes');
+    const response = await fetch('http://localhost:3030/data/recipes');
     const recipes = await response.json();
 
     return Object.values(recipes);
 }
 
 async function getRecipeById(id) {
-    const response = await fetch('http://localhost:3030/jsonstore/cookbook/details/' + id);
+    const response = await fetch('http://localhost:3030/data/recipes/' + id);
     const recipe = await response.json();
 
     return recipe;
@@ -48,6 +48,16 @@ function createRecipeCard(recipe) {
 
 window.addEventListener('load', async () => {
     const main = document.querySelector('main');
+    if (localStorage.getItem('authToken') && localStorage.getItem('username')) {
+        const userNav = document.querySelector('#user')
+        userNav.style.display = 'inline';
+
+        let logoutBtn = document.getElementById('logoutBtn');
+        logoutBtn.addEventListener('click', logout)
+    } else {
+        const guestNav = document.querySelector('#guest');
+        guestNav.style.display = 'inline';
+    }
 
     const recipes = await getRecipes();
     const cards = recipes.map(createRecipePreview);
@@ -55,6 +65,11 @@ window.addEventListener('load', async () => {
     main.innerHTML = '';
     cards.forEach(c => main.appendChild(c));
 });
+
+function logout() {
+    localStorage.clear();
+    location.href = '/JS-Applications/03.RemoteDataAndAuthentication/Lab/base/index.html'
+}
 
 function e(type, attributes, ...content) {
     const result = document.createElement(type);
