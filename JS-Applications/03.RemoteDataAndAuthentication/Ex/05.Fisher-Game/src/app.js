@@ -1,62 +1,61 @@
-const userData = JSON.parse(localStorage.getItem('userData'));
-const logoutUrl = 'http://localhost:3030/users/logout';
-console.log(userData);
+const userData = JSON.parse(localStorage.getItem("userData"));
+const logoutURL = "http://localhost:3030/users/logout";
+const getCatchesURL = "http://localhost:3030/data/catches";
 
-document.querySelector('#catches').innerHTML = '';
-document.querySelector(".load").addEventListener('click', loadCatches);
-document.querySelector('#addForm').addEventListener('submit', addCatches);
-document.querySelector('#main').addEventListener('click', (event) => {
-    if(event.target.tagName === 'BUTTON'){
-        if(event.target.textContent === 'Update'){
-            updateCatch(event)
-        } else if(event.target.textContent === 'Delete'){
+document.querySelector("#catches").innerHTML = "";
+document.querySelector(".load").addEventListener("click", loadCatches);
+document.querySelector("#addForm").addEventListener("submit", addCatches);
+document.querySelector("#main").addEventListener("click", (event) => {
+    if (event.target.tagName === "BUTTON") {
+        if (event.target.textContent === "Update") {
+            updateCatch(event);
+        } else if (event.target.textContent === "Delete") {
             deleteCatch(event);
         }
     }
-})
+});
 
-if (userData !== null) {
+async function logout() {
+    await fetch(logoutURL, {
+        headers: {
+            "X-Authorization": userData.accessToken,
+        },
+    });
+
+    localStorage.clear();
+    window.location = "./index.html";
+}
+
+if (userData) {
     loggedUser();
 } else {
     guestUser();
 }
 
 function loggedUser() {
-    document.querySelector('#guest').style.display = 'none';
-    document.querySelector('.email > span').textContent = userData.email;
-    document.querySelector('.add').disabled = false;
+    document.querySelector("#guest").style.display = "none";
+    document.querySelector(".email > span").textContent = userData.email;
+    document.querySelector(".add").disabled = false;
 
-    document.querySelector('#logout').addEventListener('click', logout);
+    document.querySelector("#logout").addEventListener("click", logout);
 }
 
 function guestUser() {
-    document.querySelector('#user').style.display = 'none';
-    document.querySelector('.add').disabled = true;
-    document.querySelector('.email > span').textContent = 'guest';
-}
-
-async function logout() {
-
-    await fetch(logoutUrl, {
-        headers: {
-            "X-Authorization": userData.accessToken,
-        },
-    });
-    localStorage.clear();
-    window.location = './index.html';
-
+    document.querySelector("#user").style.display = "none";
+    document.querySelector(".add").disabled = true;
+    document.querySelector(".email > span").textContent = "guest";
 }
 
 async function loadCatches() {
+    document.querySelector("#catches").innerHTML = "";
 
-    document.querySelector('#catches').innerHTML = '';
-    const response = await fetch('http://localhost:3030/data/catches');
+    const response = await fetch(getCatchesURL);
     let data = await response.json();
 
     if (!Array.isArray(data)) data = [data];
+
     for (let entry of data) {
-        document.querySelector('#catches').innerHTML +=
-            `<div class="catch">
+        document.querySelector("#catches").innerHTML += `<div class="catch">
                 <label>Angler</label>
                 <input type="text" class="angler" value="${entry.angler}">
                 <label>Weight</label>
@@ -68,46 +67,61 @@ async function loadCatches() {
                 <label>Bait</label>
                 <input type="text" class="bait" value="${entry.bait}">
                 <label>Capture Time</label>
-                <input type="number" class="captureTime" value="${entry.captureTime}">
-                <button class="update" data-id="${entry._id}" ${userData && userData._id == entry._ownerId ? !'disabled' : 'disabled'}>Update</button>
-                <button class="delete" data-id="${entry._id}" ${userData && userData._id == entry._ownerId ? !'disabled' : 'disabled'}>Delete</button>
-            </div>`
+                <input type="number" class="captureTime" value="${
+                    entry.captureTime
+                }">
+                <button class="update" data-id="${entry._id}" ${
+            userData && userData._id == entry._ownerId
+                ? !"disabled"
+                : "disabled"
+        }>Update</button>
+                <button class="delete" data-id="${entry._id}" ${
+            userData && userData._id == entry._ownerId
+                ? !"disabled"
+                : "disabled"
+        }>Delete</button>
+            </div>`;
     }
-
 }
 
-async function addCatches(event) {
-    event.preventDefault();
+async function addCatches(e) {
+    e.preventDefault();
+
     try {
-        const formData = new FormData(event.target);
+        const formData = new FormData(e.target);
         const dataEntries = Object.fromEntries([...formData]);
-        if (Object.values(dataEntries).some(x => x === '')) throw new Error('Please, fill all fields!');
+        if (Object.values(dataEntries).some((x) => x === ""))
+            throw new Error("Please, fill all fields!");
 
         dataEntries._ownerId = userData._id;
 
-        const response = await fetch('http://localhost:3030/data/catches', {
-            method: 'POST',
+        const response = await fetch(getCatchesURL, {
+            method: "POST",
             headers: {
-                'Content-Type': 'application/json',
+                "Content-Type": "application/json",
                 "X-Authorization": userData.accessToken,
             },
-            body: JSON.stringify(dataEntries)
+            body: JSON.stringify(dataEntries),
         });
+
         const data = await response.json();
         if (!response.ok) {
             throw new Error(data.message);
         }
-        event.target.reset();
+
+        loadCatches();
+        e.target.reset();
     } catch (error) {
         return alert(error.message);
     }
 }
 
 async function updateCatch(event) {
-
     const ownerId = userData._id;
     const id = event.target.dataset.id;
-    const inputs = Array.from(event.target.parentNode.querySelectorAll('input'));
+    const inputs = Array.from(
+        event.target.parentNode.querySelectorAll("input")
+    );
     const inputData = {
         angler: inputs[0].value,
         weight: inputs[1].value,
@@ -116,27 +130,27 @@ async function updateCatch(event) {
         bait: inputs[4].value,
         captureTime: inputs[5].value,
         _ownerId: ownerId,
-        _id: id
-    }
+        _id: id,
+    };
 
-    const response = await fetch('http://localhost:3030/data/catches/' + id, {
-        method: 'PUT',
+    const response = await fetch(getCatchesURL + "/" + id, {
+        method: "PUT",
         headers: {
-            'Content-Type': 'application/json',
+            "Content-Type": "application/json",
             "X-Authorization": userData.accessToken,
         },
-        body: JSON.stringify(inputData)
-    })
+        body: JSON.stringify(inputData),
+    });
 
-  if(response.ok) loadCatches();
+    if (response.ok) loadCatches();
 }
 
 async function deleteCatch(event) {
-
-    
     const id = event.target.dataset.id;
-    const response = await fetch('http://localhost:3030/data/catches/' + id, {
-        method: 'DELETE',
-        headers: {'X-Authorization': userData.accessToken}
-    })
+    const response = await fetch("http://localhost:3030/data/catches/" + id, {
+        method: "DELETE",
+        headers: { "X-Authorization": userData.accessToken },
+    });
+
+    loadCatches();
 }
