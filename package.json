@@ -18,6 +18,7 @@
   "homepage": "https://github.com/nickkolev/JavaScript-Advanced#readme",
   "dependencies": {
     "chai": "^4.3.10",
+    "lit-html": "^3.0.2",
     "mocha": "^10.2.0"
   }
 }
