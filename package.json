@@ -19,6 +19,7 @@
   "dependencies": {
     "chai": "^4.3.10",
     "lit-html": "^3.0.2",
-    "mocha": "^10.2.0"
+    "mocha": "^10.2.0",
+    "until": "^0.1.1"
   }
 }
