@@ -41,6 +41,12 @@ export const registerView = (ctx) => {
             return;
         }
 
+        if(email === '' || password === '' || confPass === '') {
+            alert('All fields should be filled!');
+
+            return;
+        }
+
         userService.register(email, password)
             .then(() => {
                 ctx.page.redirect('/');
