@@ -41,7 +41,7 @@ export const registerView = (ctx) => {
             return;
         }
 
-        if(email === '' || password === '' || confPass === '') {
+        if(email == '' || password == '' || confPass == '') {
             alert('All fields should be filled!');
 
             return;

@@ -10,6 +10,7 @@ import { homeView } from './views/homeView.js';
 import { loginView } from './views/loginView.js';
 import { logoutView } from './views/logoutView.js';
 import { registerView } from './views/registerView.js';
+import { searchView } from './views/searchView.js';
 
 page(authMiddleware);
 page(renderNavigationMiddleware);
@@ -21,6 +22,7 @@ page('/register', registerView);
 page('/logout', logoutView);
 page('/catalog', catalogView);
 page('/create', createView);
+page('/search', searchView);
 page('/albums/:albumId', detailsView);
 page('/albums/:albumId/edit', editView);
 page('/albums/:albumId/delete', deleteView);
