@@ -1,7 +1,7 @@
 import { html, nothing } from "../../node_modules/lit-html/lit-html.js";
 import * as albumService from "../services/albumService.js";
 
-const detailsTemplate = (album, user) => html`
+const detailsTemplate = (album, isOwner) => html`
     <!--Details Page-->
     <section id="detailsPage">
         <div class="wrapper">
@@ -19,7 +19,7 @@ const detailsTemplate = (album, user) => html`
                 </div>
 
                 <!-- Only for registered user and creator of the album-->
-                ${user._id == album._ownerId
+                ${isOwner
                     ? html`<div class="actionBtn">
                           <a href="/albums/${album._id}/edit" class="edit">Edit</a>
                           <a href="/albums/${album._id}/delete" class="remove">Delete</a>
@@ -32,6 +32,8 @@ const detailsTemplate = (album, user) => html`
 
 export const detailsView = (ctx) => {
     albumService.getOne(ctx.params.albumId).then((album) => {
-        ctx.render(detailsTemplate(album, ctx.user));
+        let isOwner = album._ownerId == ctx.user._id;
+
+        ctx.render(detailsTemplate(album, isOwner));
     });
 };

@@ -3,6 +3,7 @@ import { authMiddleware } from './middlewares/authMiddleware.js';
 import { renderNavigationMiddleware, renderContentMiddleware } from './middlewares/renderMiddleware.js';
 import { catalogView } from './views/catalogView.js';
 import { createView } from './views/createView.js';
+import { deleteView } from './views/deleteView.js';
 import { detailsView } from './views/detailsView.js';
 import { editView } from './views/editView.js';
 import { homeView } from './views/homeView.js';
@@ -22,5 +23,6 @@ page('/catalog', catalogView);
 page('/create', createView);
 page('/albums/:albumId', detailsView);
 page('/albums/:albumId/edit', editView);
+page('/albums/:albumId/delete', deleteView);
 
 page.start();

@@ -9,3 +9,7 @@ export const getAll = () => {
 export const getOne = (albumId) => request.get(`${baseUrl}/${albumId}`);
 
 export const create = (albumData) => request.post(baseUrl, albumData);
+
+export const edit = (albumId, albumData) => request.put(`${baseUrl}/${albumId}`, albumData);
+
+export const remove = (albumId) => request.del(`${baseUrl}/${albumId}`);
