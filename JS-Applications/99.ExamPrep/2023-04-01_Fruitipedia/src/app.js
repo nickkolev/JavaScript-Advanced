@@ -1,7 +1,8 @@
 import page from '../node_modules/page/page.mjs';
 
-import { addRender } from './middleware/render.js';
-import { addSession } from './middleware/session.js';
+import { addRender } from './middlewares/render.js';
+import { addSession } from './middlewares/session.js';
+
 
 import { homePage } from './views/home.js';
 

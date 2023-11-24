@@ -1,4 +1,4 @@
-import { clearUserData, getAccessToken } from '../util.js';
+import { clearUserData, getAccessToken } from "../utils.js"
 
 const host = 'http://localhost:3030';
 
