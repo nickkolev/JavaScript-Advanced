@@ -589,7 +589,7 @@ describe("E2E tests", function () {
       expect(isHandled()).to.be.true;
     });
   });
-  describe('BONUS:Search Page [ 15 Points ]', async () => {
+  describe.only('BONUS:Search Page [ 15 Points ]', async () => {
 
     it('Show no matches for Guest [ 2.5 Points ]', async () => {
         const { get } = await handle(endpoints.search('Tomato'));

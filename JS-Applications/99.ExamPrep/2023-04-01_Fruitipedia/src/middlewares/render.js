@@ -7,7 +7,7 @@ const navTemplate = (user) => html`
 
     <nav>
         <div>
-            <a href="/fruits">Fruits</a>
+            <a href="/catalog">Fruits</a>
             <a href="/search">Search</a>
         </div>
 
