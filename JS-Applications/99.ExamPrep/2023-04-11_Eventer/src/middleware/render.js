@@ -7,14 +7,13 @@ const navTemplate = (user) => html`
 
     <nav>
         <div>
-            <a href="/catalog">Motorcycles</a>
-            <a href="/search">Search</a>
+            <a href="/catalog">Events</a>
         </div>
 
         ${user
             ? html`
                   <div class="user">
-                      <a href="/create">Add Motorcycle</a>
+                      <a href="/create">Add Event</a>
                       <a href="/logout">Logout</a>
                   </div>
               `
