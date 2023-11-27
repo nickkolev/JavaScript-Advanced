@@ -1,30 +1,31 @@
 import { html, nothing } from "../../node_modules/lit-html/lit-html.js";
 import * as productsService from "../api/products.js";
 
-const detailsTemplate = (event, onDelete, going, isUserGoing, handleGoing, ctx) => html`
-    <section id="details">
+const detailsTemplate = (product, onDelete, bought, hasUserBought, handleBuying, ctx) => 
+html`
+        <section id="details">
           <div id="details-wrapper">
-            <img id="details-img" src="${event.imageUrl}" alt="example1" />
-            <p id="details-title">${event.name}</p>
+            <img id="details-img" src="${product.imageUrl}" alt="example1" />
+            <p id="details-title">${product.name}</p>
             <p id="details-category">
-              Category: <span id="categories">${event.category}</span>
+              Category: <span id="categories">${product.category}</span>
             </p>
-            <p id="details-date">
-              Date:<span id="date">${event.date}</span></p>
+            <p id="details-price">
+              Price: <span id="price-number">${product.price}</span>$</p>
             <div id="info-wrapper">
               <div id="details-description">
-                <span>${event.description}</span>
+                <h4>Bought: <span id="buys">${bought}</span> times.</h4>
+                <span>${product.description}</span>
               </div>
-
             </div>
-
-            <h3>Going: <span id="go">${going}</span> times.</h3>
 
             <!--Edit and Delete are only for creator-->
               ${
-                  event.isOwner
+                  product.isOwner
                       ? html` <div id="action-buttons">
-                            <a href="/edit/${event._id}" id="edit-btn">Edit</a>
+                            <a href="/edit/${product._id}" id="edit-btn"
+                                >Edit</a
+                            >
                             <a
                                 @click=${onDelete}
                                 href="javascript:void(0)"
@@ -37,11 +38,12 @@ const detailsTemplate = (event, onDelete, going, isUserGoing, handleGoing, ctx) 
 
               <!--Bonus - Only for logged-in users ( not authors )-->
               ${
-                  !event.isOwner && ctx.user && !isUserGoing
-                      ? html`<a href="/going" id="go-btn" @click=${handleGoing}>Going</a>`
+                  !product.isOwner && ctx.user && !hasUserBought
+                      ? html`<a href="/buy" id="buy-btn" @click=${handleBuying}
+                            >Buy</a
+                        >`
                       : nothing
               }
-              
             </div>
           </div>
         </section>
@@ -50,18 +52,19 @@ const detailsTemplate = (event, onDelete, going, isUserGoing, handleGoing, ctx) 
 export async function detailsPage(ctx) {
     const productId = ctx.params.id;
     const product = await productsService.getById(productId);
-    const going = await productsService.getGoing(productId);
-    let isUserGoing = false;
+    const going = await productsService.getBoughtCount(productId);
+    let hasUserBought = false;
 
     if (ctx.user) {
-        isUserGoing = Boolean(await productsService.isUserGoing(
-            ctx.user._id,
-            productId
-        ));
+      hasUserBought = Boolean(
+            await productsService.hasUserBought(ctx.user._id, productId)
+        );
         product.isOwner = ctx.user._id == product._ownerId;
     }
 
-    ctx.render(detailsTemplate(product, onDelete, going, isUserGoing, handleGoing, ctx));
+    ctx.render(
+        detailsTemplate(product, onDelete, going, hasUserBought, handleBuying, ctx)
+    );
 
     async function onDelete() {
         const confirmed = confirm(
@@ -75,10 +78,10 @@ export async function detailsPage(ctx) {
         }
     }
 
-    async function handleGoing(event) {
-      event.preventDefault();
-      await productsService.goToEvent(productId);
+    async function handleBuying(event) {
+        event.preventDefault();
+        await productsService.buyProduct(productId);
 
-      ctx.page.redirect(`/details/${productId}`);
+        ctx.page.redirect(`/details/${productId}`);
     }
 }

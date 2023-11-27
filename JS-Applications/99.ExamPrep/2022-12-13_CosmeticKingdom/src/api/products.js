@@ -4,7 +4,7 @@ const endpoints = {
     getAllProducts: "/data/products?sortBy=_createdOn%20desc",
     create: `/data/products`,
     byId: `/data/products/`,
-    deleteById: `/data/products}/`,
+    deleteById: `/data/products/`,
     update: `/data/products/`,
 };
 
@@ -28,14 +28,14 @@ export async function deleteById(id) {
     return api.del(endpoints.deleteById + id);
 }
 
-export async function getGoing(id) {
-    return api.get(`/data/going?where=eventId%3D%22${id}%22&distinct=_ownerId&count`);
+export async function getBoughtCount(id) {
+    return api.get(`/data/bought?where=productId%3D%22${id}%22&distinct=_ownerId&count`);
 }
 
-export async function isUserGoing(userId, eventId) {
-    return api.get(`/data/going?where=eventId%3D%22${eventId}%22%20and%20_ownerId%3D%22${userId}%22&count`);
+export async function hasUserBought(userId, productId) {
+    return api.get(`/data/bought?where=productId%3D%22${productId}%22%20and%20_ownerId%3D%22${userId}%22&count`);
 }
 
-export async function goToEvent(id) {
-    return api.post(`/data/going`, {eventId: id});
+export async function buyProduct(id) {
+    return api.post(`/data/bought`, {productId: id});
 }
