@@ -1,7 +1,7 @@
 import { html, nothing } from "../../node_modules/lit-html/lit-html.js";
 import * as productsService from "../api/products.js";
 
-const detailsTemplate = (product, onDelete, bought, hasUserBought, handleBuying, ctx) => 
+const detailsTemplate = (product, onDelete, handleBuying, ctx) => 
 html`
         <section id="details">
           <div id="details-wrapper">
@@ -14,7 +14,7 @@ html`
               Price: <span id="price-number">${product.price}</span>$</p>
             <div id="info-wrapper">
               <div id="details-description">
-                <h4>Bought: <span id="buys">${bought}</span> times.</h4>
+                <h4>Bought: <span id="buys">${ctx.bought}</span> times.</h4>
                 <span>${product.description}</span>
               </div>
             </div>
@@ -38,7 +38,7 @@ html`
 
               <!--Bonus - Only for logged-in users ( not authors )-->
               ${
-                  !product.isOwner && ctx.user && !hasUserBought
+                  !product.isOwner && ctx.user && !ctx.hasUserBought
                       ? html`<a href="/buy" id="buy-btn" @click=${handleBuying}
                             >Buy</a
                         >`
@@ -52,18 +52,17 @@ html`
 export async function detailsPage(ctx) {
     const productId = ctx.params.id;
     const product = await productsService.getById(productId);
-    const going = await productsService.getBoughtCount(productId);
-    let hasUserBought = false;
+    ctx.bought = await productsService.getBoughtCount(productId);
 
     if (ctx.user) {
-      hasUserBought = Boolean(
+      ctx.hasUserBought = Boolean(
             await productsService.hasUserBought(ctx.user._id, productId)
         );
         product.isOwner = ctx.user._id == product._ownerId;
     }
 
     ctx.render(
-        detailsTemplate(product, onDelete, going, hasUserBought, handleBuying, ctx)
+        detailsTemplate(product, onDelete, handleBuying, ctx)
     );
 
     async function onDelete() {
