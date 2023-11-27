@@ -28,7 +28,7 @@ html`
                             >
                             <a
                                 @click=${onDelete}
-                                href="javascript:void(0)"
+                                href="javascriptgit sta:void(0)"
                                 id="delete-btn"
                                 >Delete</a
                             >
