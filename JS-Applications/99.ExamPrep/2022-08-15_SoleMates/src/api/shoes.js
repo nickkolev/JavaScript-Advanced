@@ -29,5 +29,5 @@ export async function deleteById(id) {
 }
 
 export async function search(searchText) {
-    return api.get(`/data/shoes?where=name%20LIKE%20%22${searchText}%22`);
+    return api.get(`/data/shoes?where=brand%20LIKE%20%22${searchText}%22`);
 };

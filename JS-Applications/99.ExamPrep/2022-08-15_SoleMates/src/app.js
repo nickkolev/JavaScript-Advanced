@@ -11,6 +11,7 @@ import { homePage } from './views/home.js';
 import { loginPage } from './views/login.js';
 import { logoutPage } from './views/logout.js';
 import { registerPage } from './views/register.js';
+import { searchPage } from './views/search.js';
 
 //middlewares
 page(addSession);
@@ -25,5 +26,6 @@ page('/catalog', catalogPage);
 page('/create', createPage);
 page('/details/:id', detailsPage);
 page('/edit/:id', editPage);
+page('/search', searchPage);
 
 page.start();
