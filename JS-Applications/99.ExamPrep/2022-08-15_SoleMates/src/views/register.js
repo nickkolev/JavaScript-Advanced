@@ -8,7 +8,7 @@ const registerTemplate = (onSubmit) => html`
             <h2>Register</h2>
             <form @submit=${onSubmit} class="login-form">
               <input
-                type="text"
+                type="email"
                 name="email"
                 id="register-email"
                 placeholder="email"
