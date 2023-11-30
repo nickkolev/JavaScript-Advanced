@@ -52,9 +52,9 @@ async function onSubmit(ctx, data, event) {
 
     await factsService.create({
         category: data.category,
-        imageUrl: data.imageUrl,
+        imageUrl: data["image-url"],
         description: data.description,
-        moreInfo: data.moreInfo,
+        moreInfo: data["additional-info"],
     });
 
     event.target.reset();

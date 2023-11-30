@@ -29,14 +29,14 @@ export async function deleteById(id) {
     return api.del(endpoints.deleteById + id);
 }
 
-export async function getLikes(id) {
-    return api.get(`/data/facts?where=albumId%3D%22${id}%22&distinct=_ownerId&count`);
+export async function getLikes(factId) {
+    return api.get(`/data/likes?where=factId%3D%22${factId}%22&distinct=_ownerId&count`);
 }
 
 export async function hasUserLiked(userId, factId) {
-    return api.get(`/data/facts?where=albumId%3D%22${factId}%22%20and%20_ownerId%3D%22${userId}%22&count`);
+    return api.get(`/data/likes?where=factId%3D%22${factId}%22%20and%20_ownerId%3D%22${userId}%22&count`);
 }
 
 export async function like(id) {
-    return api.post(`/data/facts`, {factId: id});
+    return api.post(`/data/likes`, {factId: id});
 }

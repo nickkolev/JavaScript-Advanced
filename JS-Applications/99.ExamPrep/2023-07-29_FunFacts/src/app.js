@@ -9,8 +9,8 @@ import { logoutPage } from './views/logout.js';
 import { registerPage } from './views/register.js';
 import { catalogPage } from './views/catalog.js';
 import { createPage } from './views/create.js';
-// import { detailsPage } from './views/details.js';
-// import { editPage } from './views/edit.js';
+import { detailsPage } from './views/details.js';
+import { editPage } from './views/edit.js';
 
 //middlewares
 page(addSession);
@@ -23,7 +23,7 @@ page('/register', registerPage);
 page('/logout', logoutPage);
 page('/catalog', catalogPage);
 page('/create', createPage);
-// page('/details/:id', detailsPage);
-// page('/edit/:id', editPage);
+page('/details/:id', detailsPage);
+page('/edit/:id', editPage);
 
 page.start();
